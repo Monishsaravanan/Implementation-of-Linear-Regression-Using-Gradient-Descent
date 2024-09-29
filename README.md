@@ -8,103 +8,68 @@ To write a program to predict the profit of a city using the linear regression m
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-step 1.Start.
+step1:Start the program.
 
-step 2.Import the required library and read the dataframe.
+step2:Import numpy as np.
 
-step 3.Write a function computeCost to generate the cost function.
+step3:Give the header to the data.
 
-step 4.Perform iterations og gradient steps with learning rate.
+step4:Find the profit of population.
 
-step 5.Plot the Cost function using Gradient Descent and generate the required graph.
+step5:Plot the required graph for both for Gradient Descent Graph and Prediction Graph.
 
-step 6.End.
-
+step6:End the program.
 ## Program:
 ```
 /*
 Program to implement the linear regression using gradient descent.
 Developed by: MONISH S
-RegisterNumber: 212223040115 
+RegisterNumber:  212223040115
 */
-```
-```
-import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-data=pd.read_csv("ex1.txt",header=None)
-plt.scatter(data[0],data[1])
-plt.xticks(np.arange(5,30,step=5))
-plt.yticks(np.arange(-5,30,step=5))
-plt.xlabel("Population of City(10,000s)")
-plt.ylabel("Profit ($10,000)")
-plt.title("Profit Prediction")
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+def linear_regression(x1,y,learning_rate = 0.1,num_iters=1000):
+    x=np.c_[np.ones(len(x1)),x1]
+    theta = np.zeros(x.shape[1]).reshape(-1,1)
+    for _ in range(num_iters):                    
+        #calculate predictions
+        predictions = (x).dot(theta).reshape(-1,1)
+                     
+        #calculate errors
+        errors = (predictions-y).reshape(-1,1)
+        #update theta using gradient descent
+        theta-= learning_rate*(1/len(x1))*x.T.dot(errors)
+    return theta
 
-def computeCost(X,y,theta):
-    m=len(y) 
-    h=X.dot(theta) 
-    square_err=(h-y)**2
-    return 1/(2*m)*np.sum(square_err) 
-
-data_n=data.values
-m=data_n[:,0].size
-X=np.append(np.ones((m,1)),data_n[:,0].reshape(m,1),axis=1)
-y=data_n[:,1].reshape(m,1)
-theta=np.zeros((2,1))
-computeCost(X,y,theta) 
-
-def gradientDescent(X,y,theta,alpha,num_iters):
-    m=len(y)
-    J_history=[] #empty list
-    for i in range(num_iters):
-        predictions=X.dot(theta)
-        error=np.dot(X.transpose(),(predictions-y))
-        descent=alpha*(1/m)*error
-        theta-=descent
-        J_history.append(computeCost(X,y,theta))
-    return theta,J_history
-
-theta,J_history = gradientDescent(X,y,theta,0.01,1500)
-print("h(x) ="+str(round(theta[0,0],2))+" + "+str(round(theta[1,0],2))+"x1")
-
-plt.plot(J_history)
-plt.xlabel("Iteration")
-plt.ylabel("$J(\Theta)$")
-plt.title("Cost function using Gradient Descent")
-
-plt.scatter(data[0],data[1])
-x_value=[x for x in range(25)]
-y_value=[y*theta[1]+theta[0] for y in x_value]
-plt.plot(x_value,y_value,color="r")
-plt.xticks(np.arange(5,30,step=5))
-plt.yticks(np.arange(-5,30,step=5))
-plt.xlabel("Population of City(10,000s)")
-plt.ylabel("Profit ($10,000)")
-plt.title("Profit Prediction")
-
-def predict(x,theta):
-    predictions=np.dot(theta.transpose(),x)
-    return predictions[0]
-
-predict1=predict(np.array([1,3.5]),theta)*10000
-print("For Population = 35000, we predict a profit of $"+str(round(predict1,0)))
-
-predict2=predict(np.array([1,7]),theta)*10000
-print("For Population = 70000, we predict a profit of $"+str(round(predict2,0)))
+data = pd.read_csv("C:/Users/ANANDAN S/Documents/ML labs/50_Startups.csv")
+data.head()
+#Assuming the last column is your target variable y
+x= (data.iloc[1:,:-2].values)
+x1 = x.astype(float)
+scaler = StandardScaler()
+y =(data.iloc[1:,-1].values).reshape(-1,1)
+x1_scaled = scaler.fit_transform(x1)
+y1_scaled = scaler.fit_transform(y)
+print(x)
+print(x1_scaled)
+#learn model parameters
+theta = linear_regression(x1_scaled,y1_scaled)
+#predict target value for a new data point
+new_data = np.array([165349.2,136897.8,471784.1]).reshape(-1,1)
+new_scaled = scaler.fit_transform(new_data)
+prediction = np.dot(np.append(1,new_scaled),theta)
+prediction = prediction.reshape(-1,1)
+pre = scaler.inverse_transform(prediction)
+print(prediction)
+print(f"prediction value: {pre}")
 ```
+
 ## Output:
-![image](https://github.com/user-attachments/assets/80db1498-e554-4416-b71b-46dd634d3b9e)
-# Function :
-![image](https://github.com/user-attachments/assets/2a1fd2d2-3a15-42f9-8091-be1f3a2433db)
-# Gradient Descent :
-![image](https://github.com/user-attachments/assets/88901fcf-5262-48e7-94d9-1c3bcd71c811)
-# Cost Function Using Gradient:
-![image](https://github.com/user-attachments/assets/dbfc1346-5c7a-4c78-8263-6c8889cfa6a3)
-# Linear Regression Using Profit Preiction:
-![image](https://github.com/user-attachments/assets/3255ba21-2308-4657-8e9c-617f8b1721d0)
-# PROFIT PREDICTION FOR A POPULATION OF 35000:
-![image](https://github.com/user-attachments/assets/76683465-a922-4967-8979-c91e5c1847f8)
-# PROFIT PREDICTION FOR A POPULATION OF 70000:
-![image](https://github.com/user-attachments/assets/34085782-aecb-45dd-90a9-e5b1216300bd)
+head:
+
+![Screenshot 2024-09-23 112855](https://github.com/user-attachments/assets/da9f1210-0933-49e9-83cf-593faf2fc5ba)
+![Screenshot 2024-09-23 112935](https://github.com/user-attachments/assets/17e3a463-d33d-41aa-b0e8-210dca6426ae)
+
 ## Result:
 Thus the program to implement the linear regression using gradient descent is written and verified using python programming.
